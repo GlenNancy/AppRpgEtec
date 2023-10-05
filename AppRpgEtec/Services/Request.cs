@@ -42,6 +42,24 @@ namespace AppRpgEtec.Services
             return result;
         }
 
+        public async Task<int> PostReturnIntTokenAsync<TResult>(string uri, TResult data, string token)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", token);
+
+            var content = new StringContent(JsonConvert.SerializeObject(data));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = await httpClient.PostAsync(uri, content);
+
+            string serialized = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                return int.Parse(serialized);
+            else
+                return 0;
+        }
+
         public async Task<int> PutAsync<TResult>(string uri, TResult data, string token)
         {
             HttpClient httpClient = new HttpClient();
