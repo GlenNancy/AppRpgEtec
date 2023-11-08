@@ -8,9 +8,9 @@ namespace AppRpgEtec.Models.Enuns
 {
     public enum ClasseEnum
     {
-        NaoSelecionada = 0,
+        NaoSelecionado = 0,
         Cavaleiro = 1,
         Mago = 2,
-        Clerigo = 3
+        Clarigo = 3
     }
 }

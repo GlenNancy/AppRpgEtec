@@ -2,19 +2,16 @@
 using AppRpgEtec.Services.Usuarios;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace AppRpgEtec.ViewModels.Usuarios
 {
-    public class LocalizacaoViewModel : BaseViewModel
+    internal class LocalizacaoViewModel : BaseViewModel
     {
         private UsuarioService uService;
+
         public LocalizacaoViewModel()
         {
             string token = Preferences.Get("UsuarioToken", string.Empty);
@@ -50,8 +47,7 @@ namespace AppRpgEtec.ViewModels.Usuarios
                 };
 
                 Map map = new Map();
-                MapSpan mapSpan = MapSpan
-                    .FromCenterAndRadius(location, Distance.FromKilometers(5));
+                MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, Distance.FromKilometers(5));
                 map.Pins.Add(pinEtec);
                 map.MoveToRegion(mapSpan);
 
@@ -67,12 +63,11 @@ namespace AppRpgEtec.ViewModels.Usuarios
         {
             try
             {
-                //using AppRpgEtec.Model
-                ObservableCollection<Usuario> ocUsuarios = await uService.GetUsuariosAsync();
-                List<Usuario> listaUsuarios = new List<Usuario>(ocUsuarios);
+                ObservableCollection<Usuario> ocUsuario = await uService.GetUsuariosAsync();
+                List<Usuario> listaUsuario = new List<Usuario>(ocUsuario);
                 Map map = new Map();
 
-                foreach (Usuario u in listaUsuarios)
+                foreach (Usuario u in listaUsuario)
                 {
                     if (u.Latitude != null && u.Longitude != null)
                     {

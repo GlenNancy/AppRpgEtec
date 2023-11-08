@@ -2,7 +2,6 @@
 using AppRpgEtec.Models.Enuns;
 using AppRpgEtec.Models.Personagens;
 using AppRpgEtec.Services.Personagens;
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,13 +13,11 @@ using System.Windows.Input;
 namespace AppRpgEtec.ViewModels.Personagens
 {
     [QueryProperty("PersonagemSelecionadoId", "pId")]
-    class CadastroPersonagemViewModel : BaseViewModel
+    public class CadastroPersonagemViewModel : BaseViewModel
     {
         private PersonagemService pService;
-
         public ICommand SalvarCommand { get; }
-
-        public ICommand CancelarCommand { get; set;  }
+        public ICommand CancelarCommand { get; set; }
 
         public CadastroPersonagemViewModel()
         {
@@ -29,7 +26,7 @@ namespace AppRpgEtec.ViewModels.Personagens
             _ = ObterClasses();
 
             SalvarCommand = new Command(async () => { await SalvarPersonagem(); });
-            CancelarCommand = new Command(async => CancelarCadastro());
+            CancelarCommand = new Command(async () => CancelarCadastro()); 
         }
 
         private async void CancelarCadastro()
@@ -37,16 +34,21 @@ namespace AppRpgEtec.ViewModels.Personagens
             await Shell.Current.GoToAsync("..");
         }
 
-        private int id;
-        private string nome;
-        private int pontosVida;
-        private int forca;
-        private int defesa;
-        private int inteligencia;
-        private int disputas;
-        private int vitorias;
-        private int derrotas;
+        private string personagemSelecionadoId;
 
+        public string PersonagemSelecionadoId
+        {
+            set
+            {
+                if (value != null)
+                {
+                    personagemSelecionadoId = Uri.UnescapeDataString(value);
+                    CarregarPersonagem();
+                }
+            }
+        }
+
+        private int id;
         public int Id
         {
             get => id;
@@ -56,7 +58,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private string nome;
         public string Nome
         {
             get => nome;
@@ -66,7 +68,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int pontosVida;
         public int PontosVida
         {
             get => pontosVida;
@@ -76,7 +78,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int forca;
         public int Forca
         {
             get => forca;
@@ -86,7 +88,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int defesa;
         public int Defesa
         {
             get => defesa;
@@ -96,7 +98,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int inteligencia;
         public int Inteligencia
         {
             get => inteligencia;
@@ -106,7 +108,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int disputas;
         public int Disputas
         {
             get => disputas;
@@ -116,7 +118,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int vitorias;
         public int Vitorias
         {
             get => vitorias;
@@ -126,7 +128,7 @@ namespace AppRpgEtec.ViewModels.Personagens
                 OnPropertyChanged();
             }
         }
-
+        private int derrotas;
         public int Derrotas
         {
             get => derrotas;
@@ -138,7 +140,6 @@ namespace AppRpgEtec.ViewModels.Personagens
         }
 
         private ObservableCollection<TipoClasse> listaTiposClasse;
-
         public ObservableCollection<TipoClasse> ListaTiposClasse
         {
             get { return listaTiposClasse; }
@@ -150,7 +151,6 @@ namespace AppRpgEtec.ViewModels.Personagens
                     OnPropertyChanged();
                 }
             }
-
         }
 
         public async Task ObterClasses()
@@ -163,19 +163,17 @@ namespace AppRpgEtec.ViewModels.Personagens
                 ListaTiposClasse.Add(new TipoClasse() { Id = 3, Descricao = "Clerigo" });
                 OnPropertyChanged(nameof(ListaTiposClasse));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 await Application.Current.MainPage
                     .DisplayAlert("Ops", ex.Message + " Detalhes: " + ex.InnerException, "Ok");
-            }
+            } 
         }
 
-
         private TipoClasse tipoClasseSelecionado;
-
         public TipoClasse TipoClasseSelecionado
         {
-            get { return tipoClasseSelecionado; }
+            get { return tipoClasseSelecionado;}
             set
             {
                 if (value != null)
@@ -203,21 +201,20 @@ namespace AppRpgEtec.ViewModels.Personagens
                     Id = this.id,
                     Classe = (ClasseEnum)tipoClasseSelecionado.Id
                 };
-                if(model.Id == 0)
+                if (model.Id == 0)
                     await pService.PostPersonagemAsync(model);
                 else
-                    await
-                         pService.PutPersonagemAsync(model);
+                    await pService.PutPersonagemAsync(model);
 
                 await Application.Current.MainPage
-                       .DisplayAlert("Mensagem", "Dados salvos com sucesso", "Ok");
+                    .DisplayAlert("Mensagem", "Dados salvos com Sucesso!", "Ok");
 
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage
-                    .DisplayAlert("Ops", ex.Message + "Detalhes: " + ex.InnerException, "Ok");
+                    .DisplayAlert("Ops", ex.Message + " Detalhes: " + ex.InnerException, "Ok");
             }
         }
 
@@ -227,7 +224,6 @@ namespace AppRpgEtec.ViewModels.Personagens
             {
                 Personagem p = await
                     pService.GetPersonagemAsync(int.Parse(personagemSelecionadoId));
-
                 this.Nome = p.Nome;
                 this.PontosVida = p.PontosVida;
                 this.Defesa = p.Defesa;
@@ -238,29 +234,17 @@ namespace AppRpgEtec.ViewModels.Personagens
                 this.Vitorias = p.Vitorias;
                 this.Id = p.Id;
 
-                TipoClasseSelecionado = this.ListaTiposClasse
-                    .FirstOrDefault(tClasse => tClasse.Id == (int)p.Classe);
+                TipoClasseSelecionado = this.ListaTiposClasse.FirstOrDefault(tClasse => tClasse.Id == (int)p.Classe);
             }
             catch (Exception ex) 
             {
                 await Application.Current.MainPage
-                    .DisplayAlert("Ops", ex.Message + " Detalhes: " + ex.InnerException, "ok");
+                    .DisplayAlert("Ops", ex.Message + " Detalhes: " + ex.InnerException, "Ok");
             }
         }
 
-        private string personagemSelecionadoId;
 
-        public string PersonagemSelecionadoId
-        {
-            set
-            {
-                if(value != null)
-                {
-                    personagemSelecionadoId =Uri.UnescapeDataString(value);
-                    CarregarPersonagem();
-                }
-            }
-        }
+
 
     }
 }

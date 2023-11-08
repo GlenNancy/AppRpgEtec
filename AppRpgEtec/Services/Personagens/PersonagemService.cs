@@ -1,11 +1,10 @@
-﻿using AppRpgEtec.Models.Personagens;
-using System.Collections.ObjectModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AppRpgEtec.Models.Personagens;
 
 namespace AppRpgEtec.Services.Personagens
 {
@@ -15,7 +14,7 @@ namespace AppRpgEtec.Services.Personagens
         private const string apiUrlBase = "https://bsite.net/luizfernando987/Personagens";
 
         private string _token;
-        public PersonagemService(string token)
+        public PersonagemService(string  token)
         {
             _request = new Request();
             _token = token;
@@ -25,19 +24,18 @@ namespace AppRpgEtec.Services.Personagens
         {
             return await _request.PostReturnIntTokenAsync(apiUrlBase, p, _token);
         }
-
         public async Task<ObservableCollection<Personagem>> GetPersonagensAsync()
         {
             string urlComplementar = string.Format("{0}", "/GetAll");
-            ObservableCollection<Models.Personagens.Personagem> listaPersonagens = await
-            _request.GetAsync<ObservableCollection<Models.Personagens.Personagem>>(apiUrlBase + urlComplementar,
+            ObservableCollection<Personagem> listaPersonagens = await
+            _request.GetAsync<ObservableCollection<Personagem>>(apiUrlBase + urlComplementar,
             _token);
             return listaPersonagens;
         }
         public async Task<Personagem> GetPersonagemAsync(int personagemId)
         {
             string urlComplementar = string.Format("/{0}", personagemId);
-            var personagem = await _request.GetAsync<Models.Personagens.Personagem>(apiUrlBase +
+            var personagem = await _request.GetAsync<Personagem>(apiUrlBase +
             urlComplementar, _token);
             return personagem;
         }
@@ -52,5 +50,18 @@ namespace AppRpgEtec.Services.Personagens
             var result = await _request.DeleteAsync(apiUrlBase + urlComplementar, _token);
             return result;
         }
+
+        public async Task<ObservableCollection<Personagem>> GetPersonagensByNomeAsync(string busca)
+        {
+            string urlComplementar = string.Format("{0}", "/GetAll");
+
+            ObservableCollection<Personagem> listaPersonagens = await
+                _request.GetAsync<ObservableCollection<Personagem>>(apiUrlBase + urlComplementar, _token);
+
+            var personagensFiltrados = listaPersonagens.Where(p => p.Nome.ToLower().Contains(busca.ToLower()));
+
+            return new ObservableCollection<Personagem>(personagensFiltrados);
+        }
+
     }
 }

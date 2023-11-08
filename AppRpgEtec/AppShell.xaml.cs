@@ -1,16 +1,23 @@
-﻿using AppRpgEtec.Views.Personagens;
+﻿using AppRpgEtec.ViewModels;
+using AppRpgEtec.Views.Personagens;
 
-namespace AppRpgEtec;
-
-public partial class AppShell : Shell
+namespace AppRpgEtec
 {
-	public AppShell()
+	public partial class AppShell : Shell
 	{
-		InitializeComponent();
+		AppShellViewModel viewModel;
 
-		Routing.RegisterRoute("cadPersonagemView", typeof(CadastroPersonagemView));
+		public AppShell()
+		{
+            InitializeComponent();
 
-		string login = Preferences.Get("UsuarioUsername", string.Empty);
-		lblLogin.Text = $"login: {login}";
+            viewModel = new AppShellViewModel();
+			BindingContext = viewModel;
+
+			Routing.RegisterRoute("cadPersonagemView", typeof(CadastroPersonagemView));
+
+			string login = Preferences.Get("UsuarioUsername", string.Empty);
+            lblLogin.Text = $"login: {login}";
+		}
 	}
 }
